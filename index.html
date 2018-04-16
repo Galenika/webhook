@@ -1,0 +1,535 @@
+<html>
+
+<head>
+
+</head>
+
+<body style="background-color: black;">
+	<canvas id="c" height="675" width="1366" style="position:absolute;"></canvas>
+	<script src="matrix.js"></script>
+	<div id="textPreviews" class="modal">
+	  <div class="textContent">
+		<div style="padding: 1px 10px; background-color: #10100a; color: white;" class="textHeader">
+		  <span class="close">&times;</span>
+		  <h2>Preview</h2>
+		</div>
+		<div style="padding: 2px 16px;" class="textBody">
+		  <p id="textWordPreview"></p>
+		</div>
+	  </div>
+	</div>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			padding-top: 100px;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgb(0,0,0);
+			background-color: rgba(0,0,0,0.4);
+		}
+
+		.textContent {
+			position: relative;
+			background-color: #fefefe;
+			margin: auto;
+			padding: 0;
+			border: 1px solid #10100a;
+			width: 80%;
+			box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 0.5s;
+			animation-name: animatetop;
+			animation-duration: 0.5s
+		}
+
+		@-webkit-keyframes animatetop {
+			from {right:300px; opacity:0} 
+			to {right:0; opacity:1}
+		}
+
+		@keyframes animatetop {
+			from {right:300px; opacity:0}
+			to {right:0; opacity:1}
+		}
+
+		.close {
+			color: white;
+			float: right;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: #000;
+			text-decoration: none;
+			cursor: pointer;
+		}
+	</style>
+	<script>
+		var modal = document.getElementById('textPreviews');
+		var span = document.getElementsByClassName("close")[0];
+		span.onclick = function() {
+			modal.style.display = "none";
+		}
+		window.onclick = function(event) {
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		}
+
+		function previewText(id) {
+			modal.style.display = "block";
+			document.getElementById("textWordPreview").innerHTML = document.getElementById(id).value;
+		}
+	</script>
+
+
+
+	<body>
+	<div id="options" style="background-color: 36393f; border: 3px solid #1e1e1e; position: absolute; display: block; left: 100;">
+		<div id="moveAbleOptions" style="background-color: #1e1e1e; cursor: move;">
+			<br>
+		</div>
+		<div id="paddingOptions" style="padding: 10px;">
+			<h3 style="color: White;" onclick="previewText('webHook');">
+				webhook:
+			</h3>
+			<input style="width: 100%;" class="inputCSS" id="webHook" name="discordWebHook" type="text" value="" placeholder="https://discordapp.com/api/webhooks/token/id/token"/>
+			
+			<h3 style="color: White;" onclick="previewText('userName');">
+				username:
+			</h3>
+			<input style="width: 100%;" maxlength="32"  class="inputCSS"id="userName" name="discordName" type="text" value="SnowLord's Webhook Creator"/>
+			
+			<h3 style="color: White;" onclick="previewText('icon');">
+				icon:
+			</h3>
+			<input style="width: 100%;" class="inputCSS" id="icon" name="discordIcon" type="text" value="https://vignette.wikia.nocookie.net/geometry-dash/images/5/5e/Cube61.png/revision/latest?cb=20151019224203&path-prefix=es"/>
+			
+			<h3 style="color: White;" onclick="previewText('title');">
+				title:
+			</h3>	
+			<input style="width: 100%;" maxlength="256" class="inputCSS" id="title" name="discordTitle" type="text" value=":fist: Test Complete! :fist:"/>
+		
+			<h3 style="color: White;" onclick="previewText('color');">
+				color:
+			</h3>
+			<input style="width: 100%;" onkeydown="javascript: return event.keyCode == 69 ? false : true" class="inputCSS" id="color" name="discordColor" type="number" value="4210943"/> <br> <br>
+			
+			<h3 style="color: White; margin-top: +3px;" onclick="previewText('description');">
+				message:
+			</h3>
+			<textarea maxlength="2048" onclick="this.select();" rows="4" cols="50" style="margin-top: -16px;" id="description" class="styledTextArea" name="discordMessage">Discord Webhook Message Sent Using SnowLord's Webhook Creator</textarea> <br>
+			
+			<button class="buttonSend" style="vertical-align:middle;" onclick="setUpWebHook();"/>
+				send webhook
+			</button>
+			<style>
+				.buttonSend {
+					border-radius: 5px;
+					background-color: #10100a;
+					border: none;
+					color: #FFFFFF;
+					text-align: center;
+					text-decoration: none;
+					font-size: 20px;
+					padding: 15px;
+					width: 100%;
+					cursor: pointer;
+					margin-top: 10px;
+					-webkit-transition-duration: 0.2s;
+					transition-duration: 0.2s;
+				}
+
+				.buttonSend:hover {
+					background-color: #1f1f14;
+					box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+				}
+
+				.buttonSend:active {
+					background-color: #2f2f1e;
+					transform: translateY(2px);
+				}
+			</style>
+		</div>
+	</div>
+	<style>
+		input {
+			width: 100%;
+			padding: 5px 5px;
+			box-sizing: border-box;
+			border: 1px solid red;
+			transition: .5s;
+			outline: none;
+		}
+
+		input[type=text]:focus {
+			border: 3px solid orange;
+		}
+		input {margin-top: -18px;}
+	</style>
+	<style>
+		h3 {
+			text-shadow: 1px 1px 3px black;
+		}
+	</style>
+	<style>
+		textarea.styledTextArea {
+			font-family: Arial;
+			width: 100%;
+			padding: 5px;
+			box-sizing: border-box;
+			border: 1px solid red;
+			transition: .5s;
+			outline: none;
+		}
+
+		textarea.styledTextArea:focus {
+			border: 3px solid orange;
+		}
+	</style>
+	<style>
+		p {
+			max-width: calc(50em * 0.5);
+		}
+	</style>
+
+
+	<div id="consoleLog" style="border: 3px solid #1e1e1e; position: absolute; display: block; right: 100; width: 500; background-color: 36393f;">
+		<div id="moveAbleConsole" style="background-color: #1e1e1e; cursor: move;">
+			<br>
+		</div>
+		<h4 style="margin: 10px; color: #fff;">Webhook Console</h4>
+		<p class="consoleCSS" id="console" name="webhookConsole"></p>
+		<div id="fullPrev" style="background-color: 36393f; padding: 10px; font-family: Arial;">
+			<p>
+
+				<img class="picturePreview" draggable="false" src="https://vignette.wikia.nocookie.net/geometry-dash/images/5/5e/Cube61.png/revision/latest?cb=20151019224203&path-prefix=es"></img>
+				<div class="fullNameCSS">
+					<span class="usernameCSS" id="userNamePreview">SnowLord's Webhook Creator</span>
+					<span class="botCSS">BOT</span>
+					<span class="dateCSS" id="datePreview"> Today at 0:00 AM</span> <br> <br>
+				</div>
+				<div class="colorCSS" id="colorPrev">
+					<div class="previewsCSS" id="previewOutline">
+						<div class="previewTextCSS">
+							<span class="titleCSS" id="titlePreview">:fist: Test Complete! :fist:</span><br>
+							<span class="descriptionCSS" id="descriptionPreview">Discord Webhook Message Sent Using SnowLord's Webhook Creator</span>
+						</div>
+					</div>
+				</div>
+			</p>
+		</div>
+		<style>
+			.fullNameCSS {
+				font-family: Arial;
+				margin-left: 60px;
+			}
+			
+			.picturePreview {
+				float: left;
+				background-color: rgb(64, 64, 255);
+				cursor: pointer;
+				opacity: 1;
+				transition: opacity .2s ease;
+				flex-shrink: 0;
+				margin-left: 5px;
+				margin-top: 10px;
+				background-size: 40px 40px;
+				height: 40px;
+				width: 40px;
+				background-position: 50%;
+				border-radius: 50%;
+				position: relative;
+				-webkit-box-direction: normal;
+			}
+		
+			.consoleCSS {
+				font-family: Arial;	
+				height: 300px;
+				overflow-y: auto;
+				margin-left: 45;
+				word-wrap: break-word; 
+				color: #fff;
+				border: 1px solid hsla(0,0%,100%,.04);
+				border-radius: 3px 0 0 3px;
+				font-size: 90%;
+				
+			}
+		
+			.colorCSS {
+				border-bottom-color: hsla(0,0%,100%,.04);
+				border-bottom: none;
+				border-radius: 3px 0 0 3px;
+				width: 4px;
+				float: left;
+				display: block;
+				margin: 10;
+				margin-left: 14px;
+				margin-top: 0px;
+				background-color: rgb(64, 64, 255);
+			}
+		
+			.previewsCSS {
+				background-color: rgba(46,48,54,.3);
+				float: right
+				border: 1px solid hsla(0,0%,80%,.3);
+				border-radius: 0 3px 3px 0;
+				border-color: rgba(46,48,54,.6);
+				box-sizing: border-box;
+				overflow: hidden;
+				padding: 8px 10px;
+				width: 420;
+				font-family: Arial;
+				font-size: 100%;
+				font-style: Arial;
+				vertical-align: baseline;
+				display: block;
+				-webkit-box-direction: normal;
+				user-select: text;
+				word-wrap: break-word;
+				text-rendering: optimizeLegibility;
+				line-height: 1;
+			}
+			
+			.botCSS {
+				 background-color: #7289da;
+				 color: #fff;
+				 border-radius: 3px; 
+				 font-size: 10px; 
+				 font-weight: 500; 
+				 line-height: 16px; 
+				 margin-left: 6px; 
+				 padding: 1px 2px; 
+				 vertical-align: bottom;
+			}
+			
+			.usernameCSS {
+				color: #fff; 
+				cursor: pointer;
+				font-size: 15px;
+				font-weight: 600;
+				letter-spacing: 0;
+				vertical-align: bottom;
+			}
+			
+			.usernameCSS:hover {
+				text-decoration: underline;
+			}
+			
+			.dateCSS {
+				color: #99aab5;
+				font-size: 0.75rem;
+				font-weight: 400;
+				letter-spacing: 0;
+				margin-left: 6px;
+				text-transform: none;
+				vertical-align: baseline;
+			}
+			
+			.titleCSS {
+				color: #fff!important;
+				display: inline-block;
+				font-weight: 500;
+				font-size: 16px;
+				border: 0;
+				font-family: sans-serif;
+				vertical-align: baseline;
+			}
+			
+			.descriptionCSS {
+				color: hsla(0,0%,100%,.7);
+				margin-top: 6px;
+				white-space: pre-wrap;
+				word-wrap: break-word;
+				font-size: 0.875rem!important;
+				line-height: 1rem!important;
+				vertical-align: baseline;
+			}
+		</style>
+		
+		</div>
+	</div>
+
+	<script>
+		dragElement(document.getElementById(("consoleLog")));
+
+		function dragElement(elmnt) {
+			var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+			if (document.getElementById("moveAbleConsole")) {
+				document.getElementById("moveAbleConsole").onmousedown = dragMouseDown;
+			} else {
+				elmnt.onmousedown = dragMouseDown;
+			}
+
+			function dragMouseDown(e) {
+				e = e || window.event;
+				pos3 = e.clientX;
+				pos4 = e.clientY;
+				document.onmouseup = closeDragElement;
+				document.onmousemove = elementDrag;
+			}
+
+			function elementDrag(e) {
+				e = e || window.event;
+				pos1 = pos3 - e.clientX;
+				pos2 = pos4 - e.clientY;
+				pos3 = e.clientX;
+				pos4 = e.clientY;
+				elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+				elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+			}
+
+			function closeDragElement() {
+				document.onmouseup = null;
+				document.onmousemove = null;
+			}
+		}
+	</script>
+	<script>
+		dragElement(document.getElementById(("options")));
+
+		function dragElement(elmnt) {
+			var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+			if (document.getElementById("moveAbleOptions")) {
+				document.getElementById("moveAbleOptions").onmousedown = dragMouseDown;
+			} else {
+				elmnt.onmousedown = dragMouseDown;
+			}
+
+			function dragMouseDown(e) {
+				e = e || window.event;
+				pos3 = e.clientX;
+				pos4 = e.clientY;
+				document.onmouseup = closeDragElement;
+				document.onmousemove = elementDrag;
+			}
+
+			function elementDrag(e) {
+				e = e || window.event;
+				pos1 = pos3 - e.clientX;
+				pos2 = pos4 - e.clientY;
+				pos3 = e.clientX;
+				pos4 = e.clientY;
+				elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+				elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+			}
+
+			function closeDragElement() {
+				document.onmouseup = null;
+				document.onmousemove = null;
+			}
+		}
+	</script>
+	<script>
+		
+		// Convert From/To Binary/Decimal/Hexadecimal in JavaScript
+		// https://gist.github.com/faisalman
+		// Licensed under The MIT License
+		//http://www.opensource.org/licenses/mit-license
+		
+		
+	(function(){
+
+		var ConvertBase = function (num) {
+			return {
+				from : function (baseFrom) {
+					return {
+						to : function (baseTo) {
+							return parseInt(num, baseFrom).toString(baseTo);
+						}
+					};
+				}
+			};
+		};
+			
+		ConvertBase.bin2dec = function (num) {
+			return ConvertBase(num).from(2).to(10);
+		};
+		
+		ConvertBase.bin2hex = function (num) {
+			return ConvertBase(num).from(2).to(16);
+		};
+		
+		ConvertBase.dec2bin = function (num) {
+			return ConvertBase(num).from(10).to(2);
+		};
+		
+		ConvertBase.dec2hex = function (num) {
+			return ConvertBase(num).from(10).to(16);
+		};
+		
+		ConvertBase.hex2bin = function (num) {
+			return ConvertBase(num).from(16).to(2);
+		};
+		
+		ConvertBase.hex2dec = function (num) {
+			return ConvertBase(num).from(16).to(10);
+		};
+		
+		this.ConvertBase = ConvertBase;
+		
+	})(this);
+	</script>
+	<script>
+	function setUpWebHook() {
+		if (document.getElementById("webHook").value == "" || document.getElementById("color").value == "" || document.getElementById("title").value == "" || document.getElementById("description").value == "") {
+			document.getElementById("console").innerHTML = document.getElementById("console").innerHTML + "<br>" + "Please fill out all the inputs!";
+		} else {
+			var webHook = document.getElementById("webHook").value;
+			var userName = document.getElementById("userName").value;
+			var icon = document.getElementById("icon").value;
+			var title = document.getElementById("title").value;
+			var description = document.getElementById("description").value;
+			var color = document.getElementById("color").value;
+			createEmbed(title, description, color, userName, icon, webHook);
+			document.getElementById("console").innerHTML = document.getElementById("console").innerHTML + "<br>" + "Webhook Sent To: <br>" + webHook + "<br>";
+		}
+	}	
+
+
+	function createEmbed(a, b, c, d, e, f) {
+		var message = {
+			"embeds": [{
+				"title": a,
+				"description": b,
+				"color": c
+			}],
+			"username": d,
+			"avatar_url": e
+		};
+		var send = new XMLHttpRequest;
+		send["open"](["POST"], f);
+		send["setRequestHeader"](["Content-Type"], ["application/json; charset=UTF-8"]);
+		send["send"](JSON["stringify"](message))
+	}
+	</script>
+	<script>
+	var newColor;
+	function colorPreview() {
+		if (document.getElementById("color").value == "") {
+			setTimeout(colorPreview, 1000);
+		} else {
+			try {
+				newColor = ConvertBase.dec2hex(document.getElementById("color").value);
+				document.getElementById("colorPrev").style.backgroundColor = newColor;
+				document.getElementById("descriptionPreview").innerText = document.getElementById("description").value;
+				document.getElementById("titlePreview").innerText = document.getElementById("title").value;
+				document.getElementById("userNamePreview").innerText = document.getElementById("userName").value;
+				document.getElementsByClassName("picturePreview")[0].src = document.getElementById("icon").value;	
+			} catch(e) {
+			}
+			setTimeout(colorPreview, 250);
+		}
+	}
+	colorPreview();
+	</script>
+</body>
+
+</html>
